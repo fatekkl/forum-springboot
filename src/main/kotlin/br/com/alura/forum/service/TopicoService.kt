@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service
 @Service
 class TopicoService(private var topicos: List<Topico>) {
 
+
+    // memory list to simulate database
     init {
         val curso = Curso(1,"teste", "teste")
         val user = Usuario(1, "temten", "aaaa")
