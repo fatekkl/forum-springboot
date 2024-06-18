@@ -1,6 +1,7 @@
 package br.com.alura.forum.service
 
-import br.com.alura.forum.dto.NovoTopicoDTO
+import br.com.alura.forum.dto.NovoTopicoForm
+import br.com.alura.forum.dto.TopicoView
 import br.com.alura.forum.model.Topico
 import org.springframework.stereotype.Service
 
@@ -16,28 +17,37 @@ class TopicoService(
     // memory list to simulate database
 
 
-    fun listar(): List<Topico> {
+    fun listar(): List<TopicoView> {
 
-        return topicos
+        return topicos.stream().map { t -> TopicoView(t.id, t.titulo, t.mensagem, t.status, t.dataCriacao) }.toList()
     }
 
-    fun buscarPorId(id: Long): Topico {
+    fun buscarPorId(id: Long): TopicoView {
 
 
-        return topicos.stream().filter { t ->
+        val topico = topicos.stream().filter { t ->
             t.id == id
         }.findFirst().get()
 
+        return TopicoView(
+            topico.id,
+            topico.titulo,
+            topico.mensagem,
+            topico.status,
+            topico.dataCriacao
+        )
 
     }
 
-    fun cadastrar(dto: NovoTopicoDTO) {
-        topicos = topicos.plus(Topico(
-            id = topicos.size.toLong() + 1,
-            titulo = dto.titulo,
-            mensagem = dto.mensagem,
-            curso = cursoService.buscarPorId(dto.idCurso),
-            autor = autorService.buscarPorId(dto.idAutor)
-        ))
+    fun cadastrar(dto: NovoTopicoForm) {
+        topicos = topicos.plus(
+            Topico(
+                id = topicos.size.toLong() + 1,
+                titulo = dto.titulo,
+                mensagem = dto.mensagem,
+                curso = cursoService.buscarPorId(dto.idCurso),
+                autor = autorService.buscarPorId(dto.idAutor)
+            )
+        )
     }
 }
