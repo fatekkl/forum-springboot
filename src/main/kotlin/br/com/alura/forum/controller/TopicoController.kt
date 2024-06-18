@@ -1,11 +1,12 @@
 package br.com.alura.forum.controller
 
-import br.com.alura.forum.model.Curso
+import br.com.alura.forum.dto.NovoTopicoDTO
 import br.com.alura.forum.model.Topico
-import br.com.alura.forum.model.Usuario
 import br.com.alura.forum.service.TopicoService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -26,4 +27,11 @@ class TopicoController(private val service: TopicoService) {
 
         return service.buscarPorId(id)
     }
+
+
+    @PostMapping
+    fun cadastrar(@RequestBody dto: NovoTopicoDTO) {
+        service.cadastrar(dto)
+    }
+
 }
