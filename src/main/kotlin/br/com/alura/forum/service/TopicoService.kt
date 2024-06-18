@@ -1,25 +1,20 @@
 package br.com.alura.forum.service
 
-import br.com.alura.forum.model.Curso
+import br.com.alura.forum.dto.NovoTopicoDTO
 import br.com.alura.forum.model.Topico
-import br.com.alura.forum.model.Usuario
 import org.springframework.stereotype.Service
 
 
 @Service
-class TopicoService(private var topicos: List<Topico>) {
+class TopicoService(
+    private var topicos: List<Topico> = ArrayList(),
+    private val cursoService: CursoService,
+    private val autorService: UsuarioService,
+) {
 
 
     // memory list to simulate database
-    init {
-        val curso = Curso(1,"teste", "teste")
-        val user = Usuario(1, "temten", "aaaa")
 
-        val topico = Topico(1, "teste", "teste1", curso = curso, autor =  user)
-        val topico2 = Topico(2,"teste2", "teste2", curso = curso, autor = user )
-
-        topicos = listOf(topico, topico2)
-    }
 
     fun listar(): List<Topico> {
 
@@ -34,5 +29,15 @@ class TopicoService(private var topicos: List<Topico>) {
         }.findFirst().get()
 
 
+    }
+
+    fun cadastrar(dto: NovoTopicoDTO) {
+        topicos = topicos.plus(Topico(
+            id = topicos.size.toLong() + 1,
+            titulo = dto.titulo,
+            mensagem = dto.mensagem,
+            curso = cursoService.buscarPorId(dto.idCurso),
+            autor = autorService.buscarPorId(dto.idAutor)
+        ))
     }
 }
