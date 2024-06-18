@@ -2,6 +2,8 @@ package br.com.alura.forum.service
 
 import br.com.alura.forum.dto.NovoTopicoForm
 import br.com.alura.forum.dto.TopicoView
+import br.com.alura.forum.mapper.TopicoFormMapper
+import br.com.alura.forum.mapper.TopicoViewMapper
 import br.com.alura.forum.model.Topico
 import org.springframework.stereotype.Service
 
@@ -9,17 +11,13 @@ import org.springframework.stereotype.Service
 @Service
 class TopicoService(
     private var topicos: List<Topico> = ArrayList(),
-    private val cursoService: CursoService,
-    private val autorService: UsuarioService,
+    private val topicoViewMapper: TopicoViewMapper,
+    private val topicoFormMapper: TopicoFormMapper
 ) {
-
-
-    // memory list to simulate database
-
 
     fun listar(): List<TopicoView> {
 
-        return topicos.stream().map { t -> TopicoView(t.id, t.titulo, t.mensagem, t.status, t.dataCriacao) }.toList()
+        return topicos.stream().map { t -> topicoViewMapper.map(t)}.toList()
     }
 
     fun buscarPorId(id: Long): TopicoView {
@@ -29,25 +27,15 @@ class TopicoService(
             t.id == id
         }.findFirst().get()
 
-        return TopicoView(
-            topico.id,
-            topico.titulo,
-            topico.mensagem,
-            topico.status,
-            topico.dataCriacao
-        )
-
+        return topicoViewMapper.map(topico)
     }
 
     fun cadastrar(dto: NovoTopicoForm) {
-        topicos = topicos.plus(
-            Topico(
-                id = topicos.size.toLong() + 1,
-                titulo = dto.titulo,
-                mensagem = dto.mensagem,
-                curso = cursoService.buscarPorId(dto.idCurso),
-                autor = autorService.buscarPorId(dto.idAutor)
-            )
-        )
+
+        val topico = topicoFormMapper.map(dto)
+
+        topico.id = topicos.size.toLong() + 1
+
+        topicos = topicos.plus(topico)
     }
 }
