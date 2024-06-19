@@ -6,6 +6,7 @@ import br.com.alura.forum.dto.TopicoView
 import br.com.alura.forum.model.Topico
 import br.com.alura.forum.service.TopicoService
 import jakarta.validation.Valid
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -41,6 +42,12 @@ class TopicoController(private val service: TopicoService) {
     @PutMapping
     fun atualizar(@RequestBody @Valid form: AtualizacaoTopicoForm) {
         service.atualizar(form)
+    }
+
+
+    @DeleteMapping("/{id")
+    fun deletar(@PathVariable id: Long) {
+        service.deletar(id)
     }
 
 }
