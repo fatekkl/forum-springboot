@@ -6,6 +6,7 @@ import br.com.alura.forum.dto.TopicoView
 import br.com.alura.forum.mapper.TopicoFormMapper
 import br.com.alura.forum.mapper.TopicoViewMapper
 import br.com.alura.forum.model.Topico
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 
@@ -31,32 +32,28 @@ class TopicoService(
         return topicoViewMapper.map(topico)
     }
 
-    fun cadastrar(dto: NovoTopicoForm) {
+    fun cadastrar(dto: NovoTopicoForm): TopicoView {
 
         val topico = topicoFormMapper.map(dto)
 
         topico.id = topicos.size.toLong() + 1
 
         topicos = topicos.plus(topico)
+
+        return topicoViewMapper.map(topico)
     }
 
-    fun atualizar(novoTopico: AtualizacaoTopicoForm) {
+    fun atualizar(novoTopico: AtualizacaoTopicoForm): TopicoView {
 
         val topico = topicos.stream().filter { t ->
             t.id == novoTopico.id
         }.findFirst().get()
 
-        topicos = topicos.minus(topico).plus(Topico(
-            id = novoTopico.id,
-            titulo = novoTopico.titulo,
-            mensagem = novoTopico.mensagem,
-            curso = topico.curso,
-            autor = topico.autor,
-            respostas = topico.respostas,
-            status = topico.status,
-            dataCriacao = topico.dataCriacao
+        val topicoAtualizado = Topico(id = novoTopico.id, titulo = novoTopico.titulo, mensagem = novoTopico.mensagem, curso = topico.curso, autor = topico.autor, respostas = topico.respostas, status = topico.status, dataCriacao = topico.dataCriacao)
 
-        ))
+        topicos = topicos.minus(topico).plus(topicoAtualizado)
+
+        return topicoViewMapper.map(topicoAtualizado)
     }
 
     fun deletar(id: Long) {
